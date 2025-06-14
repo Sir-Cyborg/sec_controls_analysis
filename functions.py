@@ -13,25 +13,30 @@ def crea_pool_keywords(descrizioni, top_n=20, lingua='italian'):
     :param lingua: lingua per le stopwords (default: 'italian')
     :return: dizionario con parole chiave (singole)
     """
-    rake = Rake()
-    keyword_counter = Counter()
-    
-    # Applica RAKE normalmente
-    rake.extract_keywords_from_text(descrizioni)
-    keywords = rake.get_ranked_phrases()  # Frasi candidate
-
-    # Prepara stopwords e punteggiatura
     stop_words = set(stopwords.words(lingua))
     punctuation = set(string.punctuation)
 
-    # Tokenizza le frasi e filtra parole
+    # Step 1: Tokenizza e filtra parole rilevanti
+    parole = word_tokenize(descrizioni.lower())
+    parole_filtrate = [
+        p for p in parole 
+        if p not in stop_words and p not in punctuation and len(p) > 2
+    ]
+
+    # Ricostruisci una stringa pulita
+    testo_pulito = " ".join(parole_filtrate)
+
+    # Step 2: Applica RAKE sulla stringa pulita
+    rake = Rake()
+    keyword_counter = Counter()
+
+    rake.extract_keywords_from_text(testo_pulito)
+    keywords = rake.get_ranked_phrases()
+
+    # Tokenizza ancora per ottenere solo parole singole da frasi di RAKE
     for frase in keywords:
-        parole = word_tokenize(frase.lower())
-        parole_filtrate = [
-            p for p in parole 
-            if p not in stop_words and p not in punctuation and len(p) > 2
-        ]
-        keyword_counter.update(parole_filtrate)
+        parole = word_tokenize(frase)
+        keyword_counter.update(parole)
 
     # Seleziona le top-N parole
     pool = [kw for kw, _ in keyword_counter.most_common(top_n)]
@@ -39,6 +44,8 @@ def crea_pool_keywords(descrizioni, top_n=20, lingua='italian'):
     result = {"pool_keywords": pool}
     return result
 
+""""
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
+"""
