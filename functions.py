@@ -1,51 +1,39 @@
-from rake_nltk import Rake
-from collections import Counter
-from nltk.corpus import stopwords
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+import numpy as np
 import string
 
-def crea_pool_keywords(descrizioni, top_n=20, lingua='italian'):
-    """
-    Estrae un pool di parole singole rilevanti da una stringa contenente descrizioni.
-    
-    :param descrizioni: stringa unica con tutte le descrizioni
-    :param top_n: numero massimo di keyword da restituire
-    :param lingua: lingua per le stopwords (default: 'italian')
-    :return: dizionario con parole chiave (singole)
-    """
+def estrai_keywords_bert(text, top_n=10, lingua='italian'):
+    # Carica modello BERT pre-addestrato per embedding frasi/parole
+    model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+
+    # Prepara stopwords e punteggiatura
     stop_words = set(stopwords.words(lingua))
     punctuation = set(string.punctuation)
 
-    # Step 1: Tokenizza e filtra parole rilevanti
-    parole = word_tokenize(descrizioni.lower())
-    parole_filtrate = [
-        p for p in parole 
-        if p not in stop_words and p not in punctuation and len(p) > 2
-    ]
+    # Tokenizza e filtra parole
+    parole = word_tokenize(text.lower())
+    parole_filtrate = [p for p in parole if p not in stop_words and p not in punctuation and len(p) > 2]
 
-    # Ricostruisci una stringa pulita
-    testo_pulito = " ".join(parole_filtrate)
+    # Embedding del testo intero
+    embedding_testo = model.encode([text])[0]
 
-    # Step 2: Applica RAKE sulla stringa pulita
-    rake = Rake()
-    keyword_counter = Counter()
+    # Embedding di ogni parola singola
+    embedding_parole = model.encode(parole_filtrate)
 
-    rake.extract_keywords_from_text(testo_pulito)
-    keywords = rake.get_ranked_phrases()
+    # Calcola similarità coseno tra ogni parola e il testo
+    sim = cosine_similarity([embedding_testo], embedding_parole)[0]
 
-    # Tokenizza ancora per ottenere solo parole singole da frasi di RAKE
-    for frase in keywords:
-        parole = word_tokenize(frase)
-        keyword_counter.update(parole)
+    # Seleziona top N parole più simili
+    top_indices = np.argsort(sim)[-top_n:][::-1]
+    keywords = [parole_filtrate[i] for i in top_indices]
 
-    # Seleziona le top-N parole
-    pool = [kw for kw, _ in keyword_counter.most_common(top_n)]
+    return keywords
 
-    result = {"pool_keywords": pool}
-    return result
-
-""""
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
+"""""
+# Esempio d’uso
+testo = "Verifica la presenza di malware, autenticazione a due fattori e protezione delle password."
+print(estrai_keywords_bert(testo, top_n=5))
 """

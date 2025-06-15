@@ -29,6 +29,12 @@ metodo usato in questo progetto è Statistical methods, usando la tecnica RAKE (
 
     Risultati: MEH
 
+
+['essere', 'devono', 'deve', 'dati', 'sistemi', 'tramite', 'dispositivi', 'almeno', 'critici', 'giorni', 'accesso', 'sicurezza', 'autorizzato', 'anno', 'cifrati', 'esterno', 'sensibili', 'backup', 'utenti', 'privilegi', 'autenticazione', 'fattori', 'ogni', 'l', 'fisico', 'sale', 'server', 'controllato', 'badge', 'videosorveglianza']
 -------------------
 Keyword extraction basata su BERT (Bidirectional Encoder Representations from Transformers)  modello di deep learning sviluppato da Google. Produce embedding contestuali, cioè vettori che cambiano a seconda della frase in cui la parola compare. In pratica, le parole vengono rappresentati in vettori -> parole tipo "re" "regina" sono rappresentate vicine nello spazio -> piu acuratezza semantica.
+ 
+ risultato: ['dati', 'firewall', 'utenti', 'vulnerabilità', 'complesse', 'password', 'conservate', 'protocolli', 'antivirus/edr', 'sicurezza', 'limitati', 'registrate', 'dispositivi', 'backup', 'autenticazione', 'aes-256', 'accesso', 'archiviate', 'privilegi', "l'accesso"]
+
+
 
