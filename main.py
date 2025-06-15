@@ -17,8 +17,8 @@ descrizioni = [c["descrizione"] for c in controlli]
 # unisci le descrizioni in un'unica stringa
 descrizioni = " ".join(descrizioni)
 
-pool_result = fn.crea_pool_keywords(descrizioni, top_n=30)
+pool_result = fn.estrai_keywords_bert(descrizioni, top_n=30)
 
 print("Pool iniziale di keyword:")
-print(pool_result["pool_keywords"])
+print(list(set(pool_result)))
 
