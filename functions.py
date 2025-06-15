@@ -4,6 +4,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import numpy as np
 import string
+from tabulate import tabulate
 
 def estrai_keywords_bert(text, top_n=10, lingua='italian'):
     # Carica modello BERT pre-addestrato per embedding frasi/parole
@@ -37,3 +38,7 @@ def estrai_keywords_bert(text, top_n=10, lingua='italian'):
 testo = "Verifica la presenza di malware, autenticazione a due fattori e protezione delle password."
 print(estrai_keywords_bert(testo, top_n=5))
 """
+
+# Stampa in formato tabellare
+def stampa(data):
+    print(tabulate(data, headers='keys', tablefmt='fancy_grid', showindex=True))

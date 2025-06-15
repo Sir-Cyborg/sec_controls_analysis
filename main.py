@@ -22,3 +22,10 @@ pool_result = fn.estrai_keywords_bert(descrizioni, top_n=30)
 print("Pool iniziale di keyword:")
 print(list(set(pool_result)))
 
+
+df["keywords"] = "" 
+for i, d in df["descrizione"].items():
+    keywords_control = fn.estrai_keywords_bert(d, top_n=5)
+    df.at[i, "keywords"] = ", ".join(keywords_control)
+
+fn.stampa(df)
